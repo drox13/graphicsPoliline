@@ -12,11 +12,11 @@ public class Windows extends JFrame{
 		setTitle("Graphics");
 		setSize(500, 500);
 		
-		PanelGraphic panelGraphic = new PanelGraphic();
+		int vectorX[] = {1,2,8, 9,12};
+		int vectorY[] = {4,3,8, 9,10};
+		PanelGraphic panelGraphic = new PanelGraphic(vectorX, vectorY);
 		add(panelGraphic);
 		
-		
-
 		setVisible(true);
 	}
 	
