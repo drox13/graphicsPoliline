@@ -75,23 +75,13 @@ public class PanelGraphic extends JPanel {
 	 * pone las marquillas del eje X
 	 */
 	public void marquillasX(Graphics g) {
-		////		System.out.println(getWidth() + " Ancho ventana");
-		//		System.out.println("margen x left:"+ marginXLeft);
-		////		System.out.println("margen x Right:"+  (getWidth()-marginXRight));
 		int higherX = higherValueX();
-		//
 		numDivisionsX = vectorValuesX.length;
 		rankX = higherX/numDivisionsX;
-		////		System.out.println("Tamaño de la linea en px: "+ totalSizeAxisX);
 		intervalX = totalSizeAxisX/numDivisionsX;
-		//		System.out.println("intervalo en px: " + intervalX);
-		//
 		g.drawLine(intervalX+marginXLeft, marginYButton-5, intervalX+marginXLeft, marginYButton+5);
-		//		System.out.println("primera marquilla se pinto en: " + (intervalX+marginXLeft));
-		//
 		for (int i = 2; i < numDivisionsX+1; i++) {
 			g.drawLine(intervalX*i+marginXLeft, marginYButton-5, intervalX*i+marginXLeft, marginYButton+5);
-			//			System.out.println(intervalX*i+marginXLeft);
 		}
 		numbersX(g, numDivisionsX, intervalX);
 	}
@@ -202,5 +192,4 @@ public class PanelGraphic extends JPanel {
 		panel.add(lb);
 		add(panel);
 	}
-
 }
