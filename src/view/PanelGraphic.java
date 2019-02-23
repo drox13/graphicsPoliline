@@ -15,7 +15,7 @@ public class PanelGraphic extends JPanel {
 	private int numDivisionsX, numDivisionsY;
 	private int vectorValuesX [] = null;
 	private int vectorValuesY [] = null;
-	private int rankX, rankY;
+	private int rankY;
 	private int xValues [];
 	private int yValues[];
 
@@ -45,6 +45,7 @@ public class PanelGraphic extends JPanel {
 
 		paintPointInterseption(g);
 		paintPoliline(g);
+		drawBarGrafhics(g);
 	}
 	/*
 	 * este metodo actuliza las margenes y el largo de la linea teniendo en cuenta el tamaño de la ventana
@@ -75,9 +76,7 @@ public class PanelGraphic extends JPanel {
 	 * pone las marquillas del eje X
 	 */
 	public void marquillasX(Graphics g) {
-		int higherX = higherValueX();
 		numDivisionsX = vectorValuesX.length;
-		rankX = higherX/numDivisionsX;
 		intervalX = totalSizeAxisX/numDivisionsX;
 		g.drawLine(intervalX+marginXLeft, marginYButton-5, intervalX+marginXLeft, marginYButton+5);
 		for (int i = 2; i < numDivisionsX+1; i++) {
@@ -191,5 +190,12 @@ public class PanelGraphic extends JPanel {
 		JLabel lb = new JLabel("GRAFICA");
 		panel.add(lb);
 		add(panel);
+	}
+	
+	public void drawBarGrafhics(Graphics g) {
+		g.setColor(Color.PINK);
+		for (int i = 0; i < vectorValuesX.length; i++) {
+			g.fillRect(marginXLeft+intervalX*(i+1)-25, marginYButton+(intervalY*vectorValuesY[i])/rankY, 50, (intervalY*vectorValuesY[i]/rankY)*-1);
+		}
 	}
 }
