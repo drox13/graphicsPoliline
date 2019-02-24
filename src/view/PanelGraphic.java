@@ -13,17 +13,17 @@ public class PanelGraphic extends JPanel {
 	private int intervalX, intervalY;
 	private int totalSizeAxisX, totalSizeAxisY;
 	private int numDivisionsX, numDivisionsY;
-	private int vectorValuesX [] = null;
-	private int vectorValuesY [] = null;
+	private String vectorValuesX [] = null;
+	private double vectorValuesY [] = null;
 	private int rankY;
-	private int xValues [];
-	private int yValues[];
+	private int xValuesForPoints [];
+	private int yValuesForPoints[];
 
 	public PanelGraphic() {
 		panel();
 	}
 
-	public PanelGraphic(int vectorX[], int vectorY[]) {
+	public PanelGraphic(String vectorX[], double vectorY[]) {
 		panel();
 		vectorValuesX = vectorX;
 		vectorValuesY = vectorY;
@@ -34,6 +34,7 @@ public class PanelGraphic extends JPanel {
 		super.paint(g);
 		g.setColor(Color.RED);
 		refreshMargins();
+		checkSizeVectors();
 
 		paintLineX(g);
 		paintLineY(g);
@@ -61,6 +62,21 @@ public class PanelGraphic extends JPanel {
 	}
 
 	/*
+	 * El metodo se encarda de comprobar que para cada x exista un y y asi determine el tamaño de los vectores
+	 */
+	private void checkSizeVectors() {
+		if (vectorValuesX.length>vectorValuesY.length) {
+			xValuesForPoints = new int [vectorValuesY.length]; 
+			yValuesForPoints = new int [vectorValuesY.length];	
+		}else if(vectorValuesX.length<vectorValuesY.length){
+			xValuesForPoints = new int [vectorValuesX.length]; 
+			yValuesForPoints = new int [vectorValuesX.length];				
+		}else {
+			xValuesForPoints = new int [vectorValuesX.length]; 
+			yValuesForPoints = new int [vectorValuesY.length];				
+		}
+	}
+	/*
 	 * este metodo pinta el eje X
 	 */
 	public void paintLineX(Graphics g) {
@@ -76,7 +92,7 @@ public class PanelGraphic extends JPanel {
 	 * pone las marquillas del eje X
 	 */
 	public void marquillasX(Graphics g) {
-		numDivisionsX = vectorValuesX.length;
+		numDivisionsX = xValuesForPoints.length;
 		intervalX = totalSizeAxisX/numDivisionsX;
 		g.drawLine(intervalX+marginXLeft, marginYButton-5, intervalX+marginXLeft, marginYButton+5);
 		for (int i = 2; i < numDivisionsX+1; i++) {
@@ -98,22 +114,18 @@ public class PanelGraphic extends JPanel {
 		}
 	}
 
-	public int higherValueX() {
-		int higherX = vectorValuesX[0];
-		for (int i = 0; i < vectorValuesX.length; i++) {
-			if (vectorValuesX[i]>higherX) {
-				higherX = vectorValuesX[i];
-			}
-		}
-		return higherX;
-	}
-
 	/*
 	 * pone las marquillas del eje Y
 	 */
 	public void marquillasY(Graphics g) {
-		int higher = higherValueY();
-		numDivisionsY = higher/2;
+		int higher = (int)Math.ceil(higherValueY());
+		if (higher%2 !=0) {
+			int div= 3;
+			higher=higher+div; //se puede poner +1
+			numDivisionsY = higher/div;
+		}else {
+			numDivisionsY = higher/2;
+		}
 		rankY = higher/numDivisionsY;
 		intervalY = totalSizeAxisY/numDivisionsY;
 
@@ -140,9 +152,9 @@ public class PanelGraphic extends JPanel {
 	 * metodo determina el valor mas alto dentro del vector
 	 * retorna el valor mas alto
 	 */
-	public int higherValueY() {
-		int higher = vectorValuesY[0];
-		for (int i = 0; i < vectorValuesY.length; i++) {
+	public double higherValueY() {
+		double higher = vectorValuesY[0];
+		for (int i = 0; i < yValuesForPoints.length; i++) {
 			if (vectorValuesY[i]>higher) {
 				higher = vectorValuesY[i];
 			}
@@ -150,14 +162,10 @@ public class PanelGraphic extends JPanel {
 		return higher;
 	}
 
-	public void paintPoliline(Graphics g) {
-		g.setColor(Color.BLUE);
 
-		for (int i = 0; i < xValues.length; i++) {
-			g.drawPolyline(xValues, yValues, xValues.length);
-		}
-	}
-
+	/*
+	 * Forma la cuadricula teniendo en cienta la marquillas de X y Y
+	 */
 	public void cuadricula(Graphics g) {
 		g.setColor(Color.GRAY);
 		for (int i = 1; i < numDivisionsX+1; i++) {			
@@ -168,19 +176,28 @@ public class PanelGraphic extends JPanel {
 		}
 	}
 
+	/*
+	 * metodo se encarga de posicionar los puntos dentro del plano
+	 */
 	public void paintPointInterseption(Graphics g) {
 		g.setColor(Color.GREEN);
-		xValues = new int [vectorValuesX.length]; 
-		yValues = new int [vectorValuesY.length];
+		//		checkSizeVectors();
 		int x, y = 0;
-		for (int i = 0; i < vectorValuesX.length; i++) {
+		for (int i = 0; i < xValuesForPoints.length; i++) {
 			x= marginXLeft+intervalX*(i+1);
-			y = marginYButton+(intervalY*vectorValuesY[i])/rankY;
+			y = (int) (marginYButton+(intervalY*vectorValuesY[i])/rankY);
 			g.fillOval(x-5, y-5, 10, 10);
-			xValues[i] = x;
-			yValues[i] = y;
+			xValuesForPoints[i] = x;
+			yValuesForPoints[i] = y;
 		}
-		g.setColor(Color.PINK);
+	}
+
+
+	public void paintPoliline(Graphics g) {
+		g.setColor(Color.BLUE);
+		for (int i = 0; i < xValuesForPoints.length; i++) {
+			g.drawPolyline(xValuesForPoints, yValuesForPoints, xValuesForPoints.length);
+		}
 	}
 
 	public void panel() {
@@ -191,11 +208,12 @@ public class PanelGraphic extends JPanel {
 		panel.add(lb);
 		add(panel);
 	}
-	
+
 	public void drawBarGrafhics(Graphics g) {
 		g.setColor(Color.PINK);
-		for (int i = 0; i < vectorValuesX.length; i++) {
-			g.fillRect(marginXLeft+intervalX*(i+1)-25, marginYButton+(intervalY*vectorValuesY[i])/rankY, 50, (intervalY*vectorValuesY[i]/rankY)*-1);
+		for (int i = 0; i < xValuesForPoints.length; i++) {
+			g.fillRect(marginXLeft+intervalX*(i+1)-getWidth()*2/100, (int)(marginYButton+(intervalY*vectorValuesY[i])/rankY),
+					getWidth()*4/100, (int)(intervalY*vectorValuesY[i]/rankY)*-1);
 		}
 	}
 }
